@@ -147,3 +147,14 @@ test("proyectos.json real: KAF completo y nada se pierde al limpiar", () => {
   assert.equal(kaf.video, "/media/kaf.mp4");
   assert.equal(kaf.portada, "/media/kaf.jpg");
 });
+
+test(".pages.yml usa exactamente las claves que lee la página", () => {
+  const yml = readFileSync(new URL("../.pages.yml", import.meta.url), "utf8");
+  const nombres = [...yml.matchAll(/^\s*- name: (\w+)/gm)].map((m) => m[1]);
+  for (const clave of Object.keys(SITIO_POR_DEFECTO)) assert.ok(nombres.includes(clave), `falta ${clave}`);
+  for (const clave of ["nombre", "tipo", "frase", "logros", "video", "portada", "enlace", "nota_enlace", "tecnologias"]) {
+    assert.ok(nombres.includes(clave), `falta ${clave}`);
+  }
+  assert.match(yml, /input: sitio\/media/);
+  assert.match(yml, /output: \/media/);
+});

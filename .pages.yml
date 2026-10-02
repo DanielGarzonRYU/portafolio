@@ -1,0 +1,95 @@
+# Configuración del panel (https://app.pagescms.org).
+# Los nombres (name) deben coincidir con las claves de sitio/datos/*.json.
+
+media:
+  input: sitio/media
+  output: /media
+  rename: safe
+  categories: [image, video]
+
+content:
+  - name: sitio
+    label: Datos del sitio
+    type: file
+    path: sitio/datos/sitio.json
+    format: json
+    fields:
+      - name: nombre
+        label: Tu nombre
+        type: string
+        required: true
+      - name: frase
+        label: Frase de presentación
+        type: string
+        required: true
+      - name: whatsapp
+        label: WhatsApp
+        description: "Código de país + número, solo dígitos. Ej: 573102165848"
+        type: string
+        required: true
+        pattern:
+          regex: "^[0-9]{10,15}$"
+          message: "Solo números, con el 57 adelante. Ej: 573102165848"
+      - name: mensaje_whatsapp
+        label: Mensaje que aparece escrito al abrir WhatsApp
+        type: string
+      - name: correo
+        label: Correo de contacto
+        type: string
+        required: true
+
+  - name: proyectos
+    label: Proyectos
+    type: file
+    path: sitio/datos/proyectos.json
+    format: json
+    fields:
+      - name: proyectos
+        label: Proyectos
+        description: "El primero de la lista aparece arriba en la página."
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{nombre}"
+        fields:
+          - name: nombre
+            label: Nombre del proyecto
+            type: string
+            required: true
+          - name: tipo
+            label: Tipo y año
+            description: "Ej: Tienda en línea · 2026"
+            type: string
+          - name: frase
+            label: Qué hace (una frase)
+            type: text
+            required: true
+          - name: logros
+            label: Logros (máximo 4)
+            description: "Puntos concretos que le importan a un cliente."
+            type: string
+            list:
+              max: 4
+          - name: video
+            label: Video (MP4, máximo 10 MB)
+            type: file
+            options:
+              categories: [video]
+          - name: portada
+            label: Imagen de portada (se ve mientras carga el video)
+            type: image
+          - name: enlace
+            label: Enlace al sitio en vivo
+            type: string
+            pattern:
+              regex: "^$|^https?://"
+              message: "Debe empezar por https://"
+          - name: nota_enlace
+            label: Nota junto al botón
+            description: "Ej: Puede tardar unos segundos en abrir."
+            type: string
+          - name: tecnologias
+            label: Tecnologías
+            type: string
+            list: true
