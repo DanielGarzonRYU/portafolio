@@ -13,7 +13,15 @@
       "portada": "/media/kaf.jpg",
       "enlace": "https://kaf-frontend.onrender.com",
       "nota_enlace": "Puede tardar unos segundos en abrir.",
-      "tecnologias": ["React", "Node.js", "PostgreSQL"]
+      "tecnologias": [
+        "React",
+        "Node.js",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "nombre": "Prueba",
+      "frase": "prueba"
     }
   ]
 }
