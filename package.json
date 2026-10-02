@@ -1,13 +1,11 @@
 {
   "name": "mi-web",
   "private": true,
-  "description": "Portafolio personal de proyectos",
+  "description": "Portafolio de proyectos de Cesar Daniel Cristancho Garzón",
+  "type": "module",
   "scripts": {
     "dev": "wrangler pages dev",
-    "publicar": "wrangler pages deploy"
-  },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.129.0"
+    "test": "node --test tests/"
   },
   "devDependencies": {
     "wrangler": "^4.143.0"
