@@ -52,8 +52,8 @@ De arriba hacia abajo:
 | `tipo` | no | Etiqueta pequeña sobre el título (ej. "Tienda en línea · 2026") |
 | `frase` | sí | Una frase que dice qué hace |
 | `logros` | no | Lista de 3 a 4 puntos concretos, mostrados con ✓ |
-| `video` | no | Ruta a un MP4 en `media/` |
-| `portada` | no | Ruta a una imagen en `media/`, se muestra mientras carga el video |
+| `video` | no | Ruta a un MP4 (`/media/<archivo>.mp4`) |
+| `portada` | no | Ruta a una imagen (`/media/<archivo>`), se muestra mientras carga el video |
 | `enlace` | no | URL del sitio en vivo. Muestra el botón **"Ver sitio en vivo →"** |
 | `nota_enlace` | no | Texto pequeño junto al botón (ej. "Puede tardar unos segundos en abrir") |
 | `tecnologias` | no | Lista de etiquetas pequeñas al final del bloque |
@@ -125,7 +125,7 @@ mi-WEB/
   - `video` y `portada` son campos de tipo imagen o archivo que suben a `media`.
   - El orden de la lista define el orden en la página.
 
-> Durante la implementación se verifica la sintaxis exacta de `.pages.yml` contra la documentación actual de Pages CMS (tipos de campo, listas de objetos, subida de archivos que no son imagen como MP4). Si Pages CMS no permite subir MP4 desde el panel, el video se sube desde la web de GitHub ("Add file → Upload") y en el panel se escribe solo su ruta. Esto quedaría documentado en el LEEME.
+> Verificado el 2026-10-02 en la documentación de Pages CMS: los campos `file` aceptan `categories: [video]`, así que el MP4 se sube desde el panel. Con `output: /media`, las rutas se guardan como `/media/<archivo>`.
 
 ### Qué se elimina del sitio actual
 
