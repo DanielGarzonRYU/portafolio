@@ -1,0 +1,3 @@
+# Copia este archivo como ".dev.vars" y pon tu clave para probar la IA en tu computador.
+# .dev.vars NO se sube a internet (está en .gitignore).
+ANTHROPIC_API_KEY=sk-ant-...

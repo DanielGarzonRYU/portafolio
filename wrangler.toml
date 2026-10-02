@@ -1,0 +1,11 @@
+# Configuración de Cloudflare Pages (ver LEEME.md)
+name = "mi-portafolio"
+pages_build_output_dir = "sitio"
+compatibility_date = "2026-09-01"
+
+# Base de datos para contadores de visitas/descargas.
+# Crea la tuya con:  npx wrangler kv namespace create CONTADORES
+# y reemplaza el id de abajo por el que te muestre.
+[[kv_namespaces]]
+binding = "CONTADORES"
+id = "REEMPLAZA_CON_TU_ID"
