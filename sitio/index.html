@@ -3,100 +3,69 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portafolio de proyectos</title>
-  <meta name="description" content="Portafolio de proyectos: aplicaciones web y móviles, demos en vivo y descargas verificadas.">
+  <title>Cesar Daniel Cristancho Garzón · Páginas web y apps para negocios</title>
+  <meta name="description" content="Desarrollo páginas web y apps para negocios. Mira proyectos reales funcionando y escríbeme por WhatsApp.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cesar Daniel Cristancho Garzón · Páginas web y apps para negocios">
+  <meta property="og:description" content="Mira proyectos reales funcionando y escríbeme por WhatsApp.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231d4e89'/><path d='M11 11l-5 5 5 5M21 11l5 5-5 5' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="/css/estilos.css">
+  <script type="module" src="/js/app.js"></script>
 </head>
 <body>
-  <header class="encabezado">
+  <a class="salto" href="#proyectos">Saltar a los proyectos</a>
+
+  <header class="barra">
     <div class="contenedor">
-      <a class="marca" href="index.html"><span class="monograma" data-iniciales></span><span data-nombre></span></a>
-      <nav class="nav" aria-label="Principal">
-        <a href="#proyectos">Proyectos</a>
-        <a href="#sobre-mi" class="nav-opcional">Sobre mí</a>
-        <a href="#contacto" class="nav-opcional">Contacto</a>
-      </nav>
+      <a class="marca" href="#" data-nombre>Cesar Daniel Cristancho Garzón</a>
+      <a class="btn btn-whatsapp btn-pequeno" data-whatsapp href="https://wa.me/573102165848?text=Hola%20Cesar%2C%20vi%20tu%20portafolio%20y%20me%20interesa%20un%20proyecto" target="_blank" rel="noopener">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.8Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-1.5-1-2-2l1-1-1-2Z"/></svg>
+        WhatsApp
+      </a>
     </div>
   </header>
 
   <main>
-    <section class="hero">
+    <section class="presentacion">
       <div class="contenedor">
-        <span class="etiqueta-seccion">Portafolio de proyectos</span>
-        <h1 data-nombre></h1>
-        <p class="subtitulo" id="titulo"></p>
-        <p class="presentacion" id="presentacion"></p>
+        <h1 data-nombre>Cesar Daniel Cristancho Garzón</h1>
+        <p class="frase" id="frase">Desarrollo páginas web y apps para negocios.</p>
         <div class="acciones">
-          <a class="btn btn-primario" href="#proyectos">Ver proyectos</a>
-          <button class="btn btn-secundario" type="button" data-abrir-chat>Pregúntale a mi IA</button>
-        </div>
-        <div class="cifras">
-          <div class="cifra"><strong id="cifra-proyectos">0</strong><span>proyectos publicados</span></div>
-          <div class="cifra oculto" id="bloque-descargas"><strong id="cifra-descargas">0</strong><span>descargas</span></div>
-          <div class="cifra oculto" id="bloque-visitas"><strong id="cifra-visitas">0</strong><span>visitas a proyectos</span></div>
+          <a class="btn btn-principal" href="#proyectos">Ver proyectos</a>
+          <a class="btn btn-secundario" data-whatsapp href="https://wa.me/573102165848?text=Hola%20Cesar%2C%20vi%20tu%20portafolio%20y%20me%20interesa%20un%20proyecto" target="_blank" rel="noopener">Escríbeme</a>
         </div>
       </div>
     </section>
 
-    <section class="seccion" id="proyectos">
+    <section class="proyectos" id="proyectos" aria-labelledby="titulo-proyectos">
       <div class="contenedor">
-        <div class="seccion-cabecera">
-          <h2>Proyectos</h2>
-          <p>Qué hace cada uno, para qué sirve y cómo probarlo o descargarlo.</p>
-        </div>
-        <div class="herramientas">
-          <label class="buscador">
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-            <input type="search" id="buscar" placeholder="Buscar por nombre, uso o tecnología" aria-label="Buscar proyectos">
-          </label>
-          <div class="filtros" id="filtros" role="group" aria-label="Filtrar por tipo"></div>
-        </div>
-        <div class="rejilla" id="rejilla"></div>
-      </div>
-    </section>
-
-    <section class="seccion" id="sobre-mi">
-      <div class="contenedor">
-        <div class="seccion-cabecera"><h2>Sobre mí</h2></div>
-        <div class="sobre">
-          <div>
-            <div id="sobre-texto"></div>
-            <ul class="linea-tiempo" id="trayectoria"></ul>
-          </div>
-          <div>
-            <h3>Habilidades</h3>
-            <div id="habilidades"></div>
-          </div>
+        <h2 class="etiqueta" id="titulo-proyectos">Proyectos</h2>
+        <div class="lista-proyectos" id="lista-proyectos">
+          <p class="aviso">Cargando proyectos…</p>
         </div>
       </div>
     </section>
 
-    <section class="seccion" id="contacto">
+    <section class="contacto" aria-labelledby="titulo-contacto">
       <div class="contenedor">
-        <div class="seccion-cabecera">
-          <h2>Contacto</h2>
-          <p>¿Te interesa algún proyecto o quieres trabajar conmigo? Escríbeme.</p>
+        <h2 id="titulo-contacto">¿Tienes un proyecto en mente?</h2>
+        <p>Cuéntame qué necesita tu negocio y te respondo pronto.</p>
+        <div class="acciones">
+          <a class="btn btn-whatsapp" data-whatsapp href="https://wa.me/573102165848?text=Hola%20Cesar%2C%20vi%20tu%20portafolio%20y%20me%20interesa%20un%20proyecto" target="_blank" rel="noopener">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.8Z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1c-1-.5-1.5-1-2-2l1-1-1-2Z"/></svg>
+            Escríbeme por WhatsApp
+          </a>
+          <a class="enlace-correo" data-correo href="mailto:ccdgarzon@gmail.com">ccdgarzon@gmail.com</a>
         </div>
-        <div class="contactos" id="contactos"></div>
       </div>
     </section>
   </main>
 
   <footer class="pie">
-    <div class="contenedor">
-      <span>© <span data-anio></span> <span data-nombre></span></span>
-      <span>Hecho con HTML, CSS y JavaScript</span>
-    </div>
+    <div class="contenedor">© <span data-anio>2026</span> <span data-nombre>Cesar Daniel Cristancho Garzón</span></div>
   </footer>
-
-  <script src="js/config.js"></script>
-  <script src="js/proyectos.js"></script>
-  <script src="js/comun.js"></script>
-  <script src="js/inicio.js"></script>
-  <script src="js/chat.js"></script>
 </body>
 </html>
