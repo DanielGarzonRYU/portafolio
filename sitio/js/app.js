@@ -45,7 +45,8 @@ const observador =
     ? new IntersectionObserver(
         (entradas) => {
           for (const e of entradas) {
-            if (e.isIntersecting) e.target.play().catch(() => {});
+            // Si el navegador bloquea el autoplay (p. ej. iPhone en ahorro de energía), mostrar controles
+            if (e.isIntersecting) e.target.play().catch(() => (e.target.controls = true));
             else e.target.pause();
           }
         },
