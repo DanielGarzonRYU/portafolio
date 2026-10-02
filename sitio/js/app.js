@@ -37,9 +37,25 @@ function crearRespaldo(p) {
   return el("div", "respaldo", p.nombre);
 }
 
-// La Tarea 5 reemplaza esta función por la reproducción automática.
+// Reproduce el video solo cuando el bloque está en pantalla (ahorra datos del celular).
+// Si el visitante pidió menos movimiento, no se reproduce solo: se muestran los controles.
+const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const observador =
+  !menosMovimiento && "IntersectionObserver" in window
+    ? new IntersectionObserver(
+        (entradas) => {
+          for (const e of entradas) {
+            if (e.isIntersecting) e.target.play().catch(() => {});
+            else e.target.pause();
+          }
+        },
+        { threshold: 0.35 }
+      )
+    : null;
+
 function observarVideo(video) {
-  video.controls = true;
+  if (observador) observador.observe(video);
+  else video.controls = true;
 }
 
 function crearMedia(p) {
