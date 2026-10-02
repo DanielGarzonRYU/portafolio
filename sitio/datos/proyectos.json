@@ -1,0 +1,19 @@
+{
+  "proyectos": [
+    {
+      "nombre": "KAF — Sandalias artesanales",
+      "tipo": "Tienda en línea · 2026",
+      "frase": "Catálogo en línea donde el dueño administra sus productos sin tocar código y los clientes piden por WhatsApp.",
+      "logros": [
+        "27 productos con galería de fotos",
+        "Panel privado para agregar, editar y eliminar productos",
+        "Pedidos directos a WhatsApp desde cada producto"
+      ],
+      "video": "/media/kaf.mp4",
+      "portada": "/media/kaf.jpg",
+      "enlace": "https://kaf-frontend.onrender.com",
+      "nota_enlace": "Puede tardar unos segundos en abrir.",
+      "tecnologias": ["React", "Node.js", "PostgreSQL"]
+    }
+  ]
+}

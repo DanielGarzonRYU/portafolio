@@ -123,3 +123,27 @@ test("normalizarProyectos acepta objeto o lista y descarta inválidos", () => {
   assert.deepEqual(normalizarProyectos(null), []);
   assert.deepEqual(normalizarProyectos({ proyectos: "no es lista" }), []);
 });
+
+import { readFileSync } from "node:fs";
+
+const leerJSON = (ruta) => JSON.parse(readFileSync(new URL(ruta, import.meta.url), "utf8"));
+
+test("sitio.json real tiene todos los datos, sin depender de los valores por defecto", () => {
+  const crudo = leerJSON("../sitio/datos/sitio.json");
+  for (const clave of Object.keys(SITIO_POR_DEFECTO)) {
+    assert.ok(typeof crudo[clave] === "string" && crudo[clave].trim(), `falta "${clave}" en sitio.json`);
+  }
+  assert.equal(normalizarSitio(crudo).whatsapp, "573102165848");
+});
+
+test("proyectos.json real: KAF completo y nada se pierde al limpiar", () => {
+  const crudo = leerJSON("../sitio/datos/proyectos.json");
+  assert.ok(Array.isArray(crudo.proyectos));
+  const proyectos = normalizarProyectos(crudo);
+  assert.equal(proyectos.length, crudo.proyectos.length, "algún proyecto no tiene nombre o frase");
+  const kaf = proyectos[0];
+  assert.equal(kaf.enlace, "https://kaf-frontend.onrender.com");
+  assert.equal(kaf.logros.length, 3);
+  assert.equal(kaf.video, "/media/kaf.mp4");
+  assert.equal(kaf.portada, "/media/kaf.jpg");
+});
