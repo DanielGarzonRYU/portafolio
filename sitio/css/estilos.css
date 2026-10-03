@@ -180,7 +180,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
    inicial/final (--z0 → --z1). Distintas profundidades = paralaje al hacer scroll. */
 .lamina { position: absolute; transform-style: preserve-3d; aspect-ratio: 16 / 10; transform: translateZ(var(--z0)); }
 .g-portada    { left: 0;    top: 0;    width: 100%; --z0: 60px; --z1: 190px; --d: 540ms; }
-.g-beneficios { left: -84%; top: -4%;  width: 72%;  --z0: 0px;  --z1: 40px;  --d: 300ms; }
+.g-beneficios { left: -46%; top: -88%; width: 72%;  --z0: 0px;  --z1: 40px;  --d: 300ms; }
 .g-coleccion  { left: 88%;  top: -46%; width: 72%;  --z0: 12px; --z1: 90px;  --d: 360ms; }
 .g-catalogo   { left: 94%;  top: 46%;  width: 72%;  --z0: 0px;  --z1: 55px;  --d: 420ms; }
 .g-compromiso { left: -76%; top: 72%;  width: 72%;  --z0: 8px;  --z1: 70px;  --d: 480ms; }
