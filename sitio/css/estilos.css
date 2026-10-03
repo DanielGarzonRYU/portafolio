@@ -167,16 +167,27 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .escenario {
   position: relative; height: clamp(300px, 40vw, 520px); perspective: 2400px; pointer-events: none; overflow: hidden;
   /* Desvanecido inferior: la pila nunca termina en un corte recto */
-  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
-          mask-image: linear-gradient(to bottom, #000 72%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent), linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(to bottom, #000 70%, transparent), linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+          mask-composite: intersect;
 }
 .pila {
-  position: absolute; left: 50%; top: 18%; width: min(60vw, 780px); aspect-ratio: 16 / 10;
-  transform-style: preserve-3d; transform: translateX(-50%) rotateX(50deg) rotateZ(-28deg);
+  position: absolute; left: 50%; top: 20%; width: min(54vw, 720px); aspect-ratio: 16 / 10;
+  transform-style: preserve-3d; transform: translateX(-50%) rotateX(52deg) rotateZ(-30deg);
 }
-.lamina { position: absolute; inset: 0; transform-style: preserve-3d; }
-.l1 { transform: translateZ(110px); }
-.l2 { transform: translateZ(55px); }
+/* Cada pantalla: posición en el plano (left/top/width en % del plano) y profundidad
+   inicial/final (--z0 → --z1). Distintas profundidades = paralaje al hacer scroll. */
+.lamina { position: absolute; transform-style: preserve-3d; aspect-ratio: 16 / 10; transform: translateZ(var(--z0)); }
+.g-portada    { left: 0;    top: 0;    width: 100%; --z0: 60px; --z1: 190px; --d: 540ms; }
+.g-beneficios { left: -84%; top: -4%;  width: 72%;  --z0: 0px;  --z1: 40px;  --d: 300ms; }
+.g-coleccion  { left: 88%;  top: -46%; width: 72%;  --z0: 12px; --z1: 90px;  --d: 360ms; }
+.g-catalogo   { left: 94%;  top: 46%;  width: 72%;  --z0: 0px;  --z1: 55px;  --d: 420ms; }
+.g-compromiso { left: -76%; top: 72%;  width: 72%;  --z0: 8px;  --z1: 70px;  --d: 480ms; }
+.g-movil-1    { left: -15%; top: 34%;  width: 21%;  --z0: 130px; --z1: 360px; --d: 660ms; }
+.g-movil-2    { left: 80%;  top: 22%;  width: 21%;  --z0: 150px; --z1: 400px; --d: 720ms; }
+.telefono { aspect-ratio: 390 / 844; }
+.telefono .lamina-cara { border-radius: 26px; border: 5px solid #18181b; }
 .lamina-cara {
   position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: var(--superficie);
   border: 1px solid var(--borde);
@@ -308,18 +319,14 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   .bajada { animation: entrar 700ms var(--ease-out) 420ms both; }
   .texto-intro .acciones { animation: entrar 700ms var(--ease-out) 520ms both; }
   .lamina-cara { animation: caer 1200ms var(--ease-out) both; }
-  .l3 .lamina-cara { animation-delay: 300ms; }
-  .l2 .lamina-cara { animation-delay: 420ms; }
-  .l1 .lamina-cara { animation-delay: 540ms; }
+  .lamina-cara { animation-delay: var(--d); }
 
   @supports (animation-timeline: view()) {
-    .presentacion { height: 250vh; view-timeline: --intro block; }
+    .presentacion { height: 280vh; view-timeline: --intro block; }
     .intro-fijo { position: sticky; top: 64px; height: calc(100dvh - 64px); overflow: hidden; padding-top: clamp(32px, 8vh, 88px); }
     .escenario { position: absolute; inset: 0; height: auto; }
     .pila { top: 64%; animation: pila-sube linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
-    .l1 { animation: abrir-1 linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
-    .l2 { animation: abrir-2 linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
-    .l3 { animation: abrir-3 linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
+    .lamina { animation: elevar linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
     .texto-intro { animation: intro-sale linear both; animation-timeline: --intro; animation-range: contain 0% contain 34%; }
   }
 
@@ -358,20 +365,12 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   to { opacity: 1; transform: none; }
 }
 @keyframes pila-sube {
-  from { transform: translateX(-50%) translateY(0) rotateX(56deg) rotateZ(-32deg) scale(0.92); }
-  to { transform: translateX(-50%) translateY(-60%) rotateX(18deg) rotateZ(-8deg) scale(0.94); }
+  from { transform: translateX(-50%) translateY(0) rotateX(58deg) rotateZ(-34deg) scale(0.86); }
+  to { transform: translateX(-50%) translateY(-52%) rotateX(24deg) rotateZ(-12deg) scale(1.3); }
 }
-@keyframes abrir-1 {
-  from { transform: translateZ(36px); }
-  to { transform: translateZ(220px) translate(11%, -20%); }
-}
-@keyframes abrir-2 {
-  from { transform: translateZ(18px); }
-  to { transform: translateZ(110px); }
-}
-@keyframes abrir-3 {
-  from { transform: none; }
-  to { transform: translate(-11%, 20%); }
+@keyframes elevar {
+  from { transform: translateZ(var(--z0)); }
+  to { transform: translateZ(var(--z1)); }
 }
 @keyframes intro-sale {
   to { opacity: 0; transform: translateY(-72px) scale(0.97); filter: blur(6px); }
@@ -401,7 +400,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   .lista-proyectos { gap: 80px; }
   .proyecto, .proyecto--invertido { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .intro-fijo { padding-top: 48px; }
-  .pila { width: 88vw; }
+  .pila { width: 74vw; }
   .proyecto--invertido .escena { order: 0; }
   .contacto { padding: 88px 0; }
 }
