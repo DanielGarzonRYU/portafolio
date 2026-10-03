@@ -13,6 +13,7 @@ import {
   iniciales,
   logoTecnologia,
   temaInicial,
+  telefonoLegible,
 } from "../sitio/js/datos.js";
 
 test("normalizarWhatsapp deja solo dígitos y agrega 57 a celulares colombianos", () => {
@@ -210,4 +211,11 @@ test("la política de datos existe, está enlazada desde el pie y cita la Ley 15
   for (const texto of ["Ley 1581 de 2012", "ccdgarzon@gmail.com", "Superintendencia de Industria y Comercio", "cookies"]) {
     assert.ok(legal.includes(texto), `falta "${texto}" en legal.html`);
   }
+});
+
+test("telefonoLegible formatea celulares colombianos", () => {
+  assert.equal(telefonoLegible("573102165848"), "+57 310 216 5848");
+  assert.equal(telefonoLegible("3102165848"), "+57 310 216 5848");
+  assert.equal(telefonoLegible("+1 555 123 4567"), "+15551234567");
+  assert.equal(telefonoLegible(""), "");
 });

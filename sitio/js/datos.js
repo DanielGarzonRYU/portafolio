@@ -126,3 +126,11 @@ export function temaInicial(guardado, sistemaOscuro) {
   if (guardado === "light" || guardado === "dark") return guardado;
   return sistemaOscuro ? "dark" : "light";
 }
+
+// Número legible para la tarjeta de contacto: "+57 310 216 5848" (otros países: +dígitos)
+export function telefonoLegible(numero) {
+  const d = normalizarWhatsapp(numero);
+  if (!d) return "";
+  const m = d.match(/^57(3\d{2})(\d{3})(\d{4})$/);
+  return m ? `+57 ${m[1]} ${m[2]} ${m[3]}` : `+${d}`;
+}

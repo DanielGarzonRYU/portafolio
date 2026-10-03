@@ -4,7 +4,7 @@
    y arma los bloques de proyectos. No necesitas editar este archivo.
    ============================================================= */
 
-import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio, iniciales, logoTecnologia } from "./datos.js";
+import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio, iniciales, logoTecnologia, telefonoLegible } from "./datos.js";
 import { activarTema } from "./tema.js";
 
 let enlaceContacto = "";
@@ -28,6 +28,9 @@ function aplicarSitio(sitio) {
   document.querySelectorAll("[data-nombre]").forEach((n) => (n.textContent = sitio.nombre));
   document.querySelectorAll("[data-iniciales]").forEach((n) => (n.textContent = iniciales(sitio.nombre)));
   document.querySelectorAll("[data-whatsapp]").forEach((a) => (a.href = enlaceContacto));
+  document.querySelectorAll("[data-telefono]").forEach((n) => (n.textContent = telefonoLegible(sitio.whatsapp)));
+  document.querySelectorAll("[data-correo-enlace]").forEach((a) => (a.href = `mailto:${sitio.correo}`));
+  document.querySelectorAll("[data-correo-texto]").forEach((n) => (n.textContent = sitio.correo));
   document.querySelectorAll("[data-correo]").forEach((a) => {
     a.href = `mailto:${sitio.correo}`;
     a.textContent = sitio.correo;
@@ -113,7 +116,8 @@ if (revelador) document.documentElement.classList.add("con-revelado");
 
 // Inclinación 3D sutil siguiendo el puntero (solo mouse/trackpad). Se suaviza con interpolación
 // para que tenga inercia; se actualiza el transform del elemento directamente, sin variables CSS.
-function activarInclinacion(escena, capa) {
+// intensidad: grados máximos aproximados; brillo: elemento cuyo reflejo sigue al puntero (--bx/--by).
+function activarInclinacion(escena, capa, { intensidad = 3, brillo = null } = {}) {
   if (menosMovimiento || !punteroFino) return;
   let objetivo = { x: 0, y: 0 };
   const actual = { x: 0, y: 0 };
@@ -133,7 +137,13 @@ function activarInclinacion(escena, capa) {
   };
   escena.addEventListener("pointermove", (ev) => {
     const r = escena.getBoundingClientRect();
-    mover(((ev.clientX - r.left) / r.width - 0.5) * 6, -((ev.clientY - r.top) / r.height - 0.5) * 5);
+    const x = (ev.clientX - r.left) / r.width;
+    const y = (ev.clientY - r.top) / r.height;
+    mover((x - 0.5) * intensidad * 2, -(y - 0.5) * intensidad * 1.7);
+    if (brillo) {
+      brillo.style.setProperty("--bx", `${(x * 100).toFixed(1)}%`);
+      brillo.style.setProperty("--by", `${(y * 100).toFixed(1)}%`);
+    }
   });
   escena.addEventListener("pointerleave", () => mover(0, 0));
 }
@@ -255,6 +265,8 @@ function mostrarAviso(lista, texto) {
 
 async function iniciar() {
   activarTema();
+  const tarjeta = document.querySelector(".tarjeta");
+  if (tarjeta) activarInclinacion(document.querySelector(".tarjeta-escena"), document.querySelector(".tarjeta-inclinacion"), { intensidad: 9, brillo: tarjeta });
   document.querySelectorAll("[data-anio]").forEach((n) => (n.textContent = new Date().getFullYear()));
   const lista = document.getElementById("lista-proyectos");
 
