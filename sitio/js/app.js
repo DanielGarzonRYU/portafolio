@@ -66,6 +66,7 @@ const observador =
         (entradas) => {
           for (const e of entradas) {
             const video = e.target;
+            video.dataset.enPantalla = e.isIntersecting ? "1" : "";
             if (!e.isIntersecting) video.pause();
             else if (!video.dataset.pausaManual) video.play().catch(() => {}); // si se bloquea, queda el botón de reproducir
           }
@@ -73,6 +74,29 @@ const observador =
         { threshold: 0.35 }
       )
     : null;
+
+// Arrancar un video por primera vez inicializa su decodificador (~60 ms bloqueando la página).
+// Para que ese tirón no ocurra justo al hacer scroll, se prepara cuando el navegador está
+// desocupado: se reproduce y, si no está en pantalla, se pausa de inmediato.
+// No se hace con "ahorro de datos" ni en conexiones lentas (descargaría el video antes de tiempo).
+function prepararVideos() {
+  const conexion = navigator.connection;
+  if (!observador || conexion?.saveData || /(^|-)2g|3g/.test(conexion?.effectiveType || "")) return;
+  const preparar = () => {
+    document.querySelectorAll(".proyecto-media video").forEach((video) => {
+      if (video.dataset.pausaManual || video.dataset.enPantalla) return;
+      video.preload = "auto";
+      video
+        .play()
+        .then(() => {
+          if (!video.dataset.enPantalla) video.pause();
+        })
+        .catch(() => {});
+    });
+  };
+  if ("requestIdleCallback" in window) requestIdleCallback(preparar, { timeout: 4000 });
+  else setTimeout(preparar, 2000);
+}
 
 // Botón propio de pausa/reproducción sobre el video (WCAG 2.2.2: todo lo que se mueve se puede pausar)
 function crearBotonVideo(video) {
@@ -290,6 +314,7 @@ async function iniciar() {
     return;
   }
   lista.replaceChildren(...datos.map(crearProyecto));
+  prepararVideos();
 }
 
 iniciar();
