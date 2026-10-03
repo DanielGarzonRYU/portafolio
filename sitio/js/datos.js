@@ -6,7 +6,7 @@
 
 export const SITIO_POR_DEFECTO = {
   nombre: "Cesar Daniel Cristancho Garzón",
-  frase: "Desarrollo páginas web y apps para negocios.",
+  frase: "Páginas web y apps que trabajan para tu negocio.",
   whatsapp: "573102165848",
   mensaje_whatsapp: "Hola Cesar, vi tu portafolio y me interesa un proyecto",
   correo: "ccdgarzon@gmail.com",
@@ -86,4 +86,13 @@ export function normalizarProyecto(raw) {
 export function normalizarProyectos(raw) {
   const lista = Array.isArray(raw) ? raw : Array.isArray(raw?.proyectos) ? raw.proyectos : [];
   return lista.map(normalizarProyecto).filter(Boolean);
+}
+
+// Host de un enlace para mostrarlo en la barra del marco (ej. "kaf-frontend.onrender.com")
+export function dominio(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
 }

@@ -9,6 +9,7 @@ import {
   normalizarSitio,
   normalizarProyecto,
   normalizarProyectos,
+  dominio,
 } from "../sitio/js/datos.js";
 
 test("normalizarWhatsapp deja solo dígitos y agrega 57 a celulares colombianos", () => {
@@ -63,7 +64,7 @@ test("normalizarSitio usa los valores por defecto cuando faltan datos", () => {
 test("SITIO_POR_DEFECTO tiene los datos acordados", () => {
   assert.deepEqual(SITIO_POR_DEFECTO, {
     nombre: "Cesar Daniel Cristancho Garzón",
-    frase: "Desarrollo páginas web y apps para negocios.",
+    frase: "Páginas web y apps que trabajan para tu negocio.",
     whatsapp: "573102165848",
     mensaje_whatsapp: "Hola Cesar, vi tu portafolio y me interesa un proyecto",
     correo: "ccdgarzon@gmail.com",
@@ -157,4 +158,18 @@ test(".pages.yml usa exactamente las claves que lee la página", () => {
   }
   assert.match(yml, /input: sitio\/media/);
   assert.match(yml, /output: \/media/);
+});
+
+test("los textos visibles no usan raya larga ni semirraya", () => {
+  for (const ruta of ["../sitio/datos/sitio.json", "../sitio/datos/proyectos.json", "../sitio/index.html"]) {
+    const contenido = readFileSync(new URL(ruta, import.meta.url), "utf8");
+    assert.doesNotMatch(contenido, /[—–]/, `${ruta} tiene una raya larga`);
+  }
+});
+
+test("dominio muestra solo el host del enlace, sin www", () => {
+  assert.equal(dominio("https://kaf-frontend.onrender.com"), "kaf-frontend.onrender.com");
+  assert.equal(dominio("https://www.ejemplo.com/tienda?x=1"), "ejemplo.com");
+  assert.equal(dominio(""), "");
+  assert.equal(dominio("no es una url"), "");
 });

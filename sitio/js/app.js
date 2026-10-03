@@ -4,7 +4,7 @@
    y arma los bloques de proyectos. No necesitas editar este archivo.
    ============================================================= */
 
-import { normalizarSitio, normalizarProyectos, enlaceWhatsapp } from "./datos.js";
+import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio } from "./datos.js";
 
 let enlaceContacto = "";
 
@@ -46,7 +46,11 @@ const observador =
         (entradas) => {
           for (const e of entradas) {
             // Si el navegador bloquea el autoplay (p. ej. iPhone en ahorro de energía), mostrar controles
-            if (e.isIntersecting) e.target.play().catch(() => (e.target.controls = true));
+            // (AbortError es normal: una pausa interrumpió el play al desplazarse; no requiere controles)
+            if (e.isIntersecting)
+              e.target.play().catch((err) => {
+                if (err.name === "NotAllowedError") e.target.controls = true;
+              });
             else e.target.pause();
           }
         },
@@ -57,6 +61,35 @@ const observador =
 function observarVideo(video) {
   if (observador) observador.observe(video);
   else video.controls = true;
+}
+
+// Revela cada proyecto (marco de abajo hacia arriba y texto escalonado) la primera vez que aparece.
+const revelador =
+  !menosMovimiento && "IntersectionObserver" in window
+    ? new IntersectionObserver(
+        (entradas, obs) => {
+          for (const e of entradas) {
+            if (!e.isIntersecting) continue;
+            e.target.classList.add("visible");
+            obs.unobserve(e.target);
+          }
+        },
+        { threshold: 0.2 }
+      )
+    : null;
+if (revelador) document.documentElement.classList.add("con-revelado");
+
+// Marco tipo navegador con el dominio real del proyecto
+function crearMarco(p) {
+  const marco = el("div", "marco");
+  const host = dominio(p.enlace);
+  if (host) {
+    const barra = el("div", "marco-barra");
+    barra.append(el("span", "marco-url", host));
+    marco.append(barra);
+  }
+  marco.append(crearMedia(p));
+  return marco;
 }
 
 function crearMedia(p) {
@@ -109,7 +142,10 @@ function crearProyecto(p, indice) {
 
   if (p.enlace) {
     const fila = el("div", "proyecto-enlace");
-    const boton = el("a", "btn btn-principal", "Ver sitio en vivo →");
+    const boton = el("a", "btn btn-principal", "Ver sitio en vivo");
+    const flecha = el("span", "flecha");
+    flecha.setAttribute("aria-hidden", "true");
+    boton.append(flecha);
     boton.href = p.enlace;
     boton.target = "_blank";
     boton.rel = "noopener";
@@ -124,7 +160,8 @@ function crearProyecto(p, indice) {
     cuerpo.append(tecnologias);
   }
 
-  articulo.append(crearMedia(p), cuerpo);
+  articulo.append(crearMarco(p), cuerpo);
+  if (revelador) revelador.observe(articulo);
   return articulo;
 }
 
