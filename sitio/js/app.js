@@ -4,7 +4,7 @@
    y arma los bloques de proyectos. No necesitas editar este archivo.
    ============================================================= */
 
-import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio } from "./datos.js";
+import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio, iniciales } from "./datos.js";
 
 let enlaceContacto = "";
 
@@ -25,6 +25,7 @@ function el(etiqueta, clase, texto) {
 function aplicarSitio(sitio) {
   enlaceContacto = enlaceWhatsapp(sitio.whatsapp, sitio.mensaje_whatsapp);
   document.querySelectorAll("[data-nombre]").forEach((n) => (n.textContent = sitio.nombre));
+  document.querySelectorAll("[data-iniciales]").forEach((n) => (n.textContent = iniciales(sitio.nombre)));
   document.querySelectorAll("[data-whatsapp]").forEach((a) => (a.href = enlaceContacto));
   document.querySelectorAll("[data-correo]").forEach((a) => {
     a.href = `mailto:${sitio.correo}`;
@@ -37,33 +38,50 @@ function crearRespaldo(p) {
   return el("div", "respaldo", p.nombre);
 }
 
-// Reproduce el video solo cuando el bloque está en pantalla (ahorra datos del celular).
-// Si el visitante pidió menos movimiento, no se reproduce solo: se muestran los controles.
 const menosMovimiento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const punteroFino = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+// Reproduce el video solo cuando el bloque está en pantalla (ahorra datos del celular),
+// salvo que el visitante lo haya pausado con el botón.
 const observador =
   !menosMovimiento && "IntersectionObserver" in window
     ? new IntersectionObserver(
         (entradas) => {
           for (const e of entradas) {
-            // Si el navegador bloquea el autoplay (p. ej. iPhone en ahorro de energía), mostrar controles
-            // (AbortError es normal: una pausa interrumpió el play al desplazarse; no requiere controles)
-            if (e.isIntersecting)
-              e.target.play().catch((err) => {
-                if (err.name === "NotAllowedError") e.target.controls = true;
-              });
-            else e.target.pause();
+            const video = e.target;
+            if (!e.isIntersecting) video.pause();
+            else if (!video.dataset.pausaManual) video.play().catch(() => {}); // si se bloquea, queda el botón de reproducir
           }
         },
         { threshold: 0.35 }
       )
     : null;
 
-function observarVideo(video) {
-  if (observador) observador.observe(video);
-  else video.controls = true;
+// Botón propio de pausa/reproducción sobre el video (WCAG 2.2.2: todo lo que se mueve se puede pausar)
+function crearBotonVideo(video) {
+  const boton = el("button", "boton-video");
+  boton.type = "button";
+  const actualizar = () => {
+    const pausado = video.paused;
+    boton.dataset.estado = pausado ? "pausado" : "reproduciendo";
+    boton.setAttribute("aria-label", pausado ? "Reproducir video" : "Pausar video");
+  };
+  boton.addEventListener("click", () => {
+    if (video.paused) {
+      delete video.dataset.pausaManual;
+      video.play().catch(() => {});
+    } else {
+      video.dataset.pausaManual = "1";
+      video.pause();
+    }
+  });
+  video.addEventListener("play", actualizar);
+  video.addEventListener("pause", actualizar);
+  actualizar();
+  return boton;
 }
 
-// Revela cada proyecto (marco de abajo hacia arriba y texto escalonado) la primera vez que aparece.
+// Revela el texto de cada proyecto (y el marco, si el navegador no tiene animación por scroll) al aparecer.
 const revelador =
   !menosMovimiento && "IntersectionObserver" in window
     ? new IntersectionObserver(
@@ -79,17 +97,46 @@ const revelador =
     : null;
 if (revelador) document.documentElement.classList.add("con-revelado");
 
-// Marco tipo navegador con el dominio real del proyecto
+// Inclinación 3D sutil siguiendo el puntero (solo mouse/trackpad). Se suaviza con interpolación
+// para que tenga inercia; se actualiza el transform del elemento directamente, sin variables CSS.
+function activarInclinacion(escena, capa) {
+  if (menosMovimiento || !punteroFino) return;
+  let objetivo = { x: 0, y: 0 };
+  const actual = { x: 0, y: 0 };
+  let cuadro = 0;
+  const pintar = () => {
+    actual.x += (objetivo.x - actual.x) * 0.12;
+    actual.y += (objetivo.y - actual.y) * 0.12;
+    const quieto = Math.abs(objetivo.x - actual.x) < 0.01 && Math.abs(objetivo.y - actual.y) < 0.01;
+    if (quieto) Object.assign(actual, objetivo); // llegar exacto al reposo
+    const enReposo = actual.x === 0 && actual.y === 0;
+    capa.style.transform = enReposo ? "" : `rotateX(${actual.y.toFixed(3)}deg) rotateY(${actual.x.toFixed(3)}deg)`;
+    cuadro = quieto ? 0 : requestAnimationFrame(pintar);
+  };
+  const mover = (x, y) => {
+    objetivo = { x, y };
+    if (!cuadro) cuadro = requestAnimationFrame(pintar);
+  };
+  escena.addEventListener("pointermove", (ev) => {
+    const r = escena.getBoundingClientRect();
+    mover(((ev.clientX - r.left) / r.width - 0.5) * 6, -((ev.clientY - r.top) / r.height - 0.5) * 5);
+  });
+  escena.addEventListener("pointerleave", () => mover(0, 0));
+}
+
+// Marco tipo navegador con el dominio real del proyecto, dentro de una escena 3D
 function crearMarco(p) {
+  const escena = el("div", "escena");
+  const capa = el("div", "inclinacion");
   const marco = el("div", "marco");
+  const barra = el("div", "marco-barra");
   const host = dominio(p.enlace);
-  if (host) {
-    const barra = el("div", "marco-barra");
-    barra.append(el("span", "marco-url", host));
-    marco.append(barra);
-  }
-  marco.append(crearMedia(p));
-  return marco;
+  if (host) barra.append(el("span", "marco-url", host));
+  marco.append(barra, crearMedia(p));
+  capa.append(marco);
+  escena.append(capa);
+  activarInclinacion(escena, capa);
+  return escena;
 }
 
 function crearMedia(p) {
@@ -116,10 +163,13 @@ function crearMedia(p) {
     video.setAttribute("playsinline", "");
     video.setAttribute("aria-label", `Video de ${p.nombre} funcionando`);
     if (p.portada) video.poster = p.portada;
-    video.addEventListener("error", mostrarPortada);
+    video.addEventListener("error", () => {
+      observador?.unobserve(video);
+      mostrarPortada();
+    });
     video.src = p.video;
-    marco.append(video);
-    observarVideo(video);
+    marco.append(video, crearBotonVideo(video));
+    observador?.observe(video);
   } else {
     mostrarPortada();
   }
@@ -134,6 +184,7 @@ function crearLista(clase, items) {
 
 function crearProyecto(p, indice) {
   const articulo = el("article", indice % 2 ? "proyecto proyecto--invertido" : "proyecto");
+  articulo.dataset.revelar = "";
   const cuerpo = el("div", "proyecto-cuerpo");
 
   if (p.tipo) cuerpo.append(el("p", "proyecto-tipo", p.tipo));
@@ -161,7 +212,7 @@ function crearProyecto(p, indice) {
   }
 
   articulo.append(crearMarco(p), cuerpo);
-  if (revelador) revelador.observe(articulo);
+  revelador?.observe(articulo);
   return articulo;
 }
 

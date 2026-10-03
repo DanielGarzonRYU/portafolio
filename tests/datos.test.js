@@ -10,6 +10,7 @@ import {
   normalizarProyecto,
   normalizarProyectos,
   dominio,
+  iniciales,
 } from "../sitio/js/datos.js";
 
 test("normalizarWhatsapp deja solo dígitos y agrega 57 a celulares colombianos", () => {
@@ -172,4 +173,12 @@ test("dominio muestra solo el host del enlace, sin www", () => {
   assert.equal(dominio("https://www.ejemplo.com/tienda?x=1"), "ejemplo.com");
   assert.equal(dominio(""), "");
   assert.equal(dominio("no es una url"), "");
+});
+
+test("iniciales toma nombre y primer apellido", () => {
+  assert.equal(iniciales("Cesar Daniel Cristancho Garzón"), "CC");
+  assert.equal(iniciales("Ana Gómez"), "AG");
+  assert.equal(iniciales("ana maría gómez"), "AG");
+  assert.equal(iniciales("Prince"), "P");
+  assert.equal(iniciales(""), "");
 });

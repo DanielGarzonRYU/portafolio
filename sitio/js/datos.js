@@ -96,3 +96,12 @@ export function dominio(url) {
     return "";
   }
 }
+
+// Monograma de la barra: nombre + primer apellido ("Cesar Daniel Cristancho Garzón" → "CC")
+export function iniciales(nombre) {
+  const palabras = texto(nombre).split(/\s+/).filter(Boolean);
+  if (!palabras.length) return "";
+  const apellido = palabras.length >= 4 ? palabras[palabras.length - 2] : palabras[palabras.length - 1];
+  const letras = palabras.length === 1 ? [palabras[0]] : [palabras[0], apellido];
+  return letras.map((p) => p[0].toUpperCase()).join("");
+}

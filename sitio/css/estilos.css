@@ -111,7 +111,13 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   border-bottom: 1px solid color-mix(in srgb, var(--borde) 70%, transparent);
 }
 .barra .contenedor { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
-.marca { font-weight: 600; letter-spacing: -0.015em; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.marca { display: flex; align-items: center; gap: 10px; min-width: 0; font-weight: 600; letter-spacing: -0.015em; text-decoration: none; }
+.monograma {
+  display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 999px;
+  background: var(--texto); color: var(--fondo); font-size: .75rem; font-weight: 600; letter-spacing: 0;
+}
+.marca-nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* ---------- Presentación ---------- */
 .presentacion { padding: 88px 0 64px; }
@@ -126,7 +132,11 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 
 .proyecto { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: center; }
 .proyecto--invertido { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
-.proyecto--invertido .marco { order: 2; }
+.proyecto--invertido .escena { order: 2; }
+
+/* Escena 3D: la perspectiva vive en .escena; .inclinacion sigue al puntero y .marco se endereza con el scroll */
+.escena { perspective: 1400px; }
+.inclinacion { transform-style: preserve-3d; }
 
 /* Marco tipo navegador: deja claro que es un sitio web real funcionando */
 .marco {
@@ -142,7 +152,43 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   border: 1px solid var(--borde); border-radius: 999px; padding: 2px 14px;
   max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-.proyecto-media { aspect-ratio: 16 / 10; background: var(--superficie-2); }
+.proyecto-media { position: relative; aspect-ratio: 16 / 10; background: var(--superficie-2); }
+
+/* Botón de pausa/reproducción: píldora de vidrio esmerilado en la esquina del video */
+.boton-video {
+  position: absolute; right: 12px; bottom: 12px; width: 36px; height: 36px; border-radius: 999px; cursor: pointer;
+  display: grid; place-items: center; padding: 0; color: #fafafa;
+  border: 1px solid rgb(255 255 255 / .18);
+  background: rgb(24 24 27 / .45);
+  backdrop-filter: blur(12px) saturate(160%); -webkit-backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .12);
+  transition: transform 160ms var(--ease-out), background-color 200ms ease;
+}
+.boton-video::before {
+  content: ""; width: 14px; height: 14px; background: currentColor;
+  -webkit-mask: url("/iconos/pause-fill.svg") center / contain no-repeat;
+          mask: url("/iconos/pause-fill.svg") center / contain no-repeat;
+}
+.boton-video[data-estado="pausado"]::before {
+  -webkit-mask-image: url("/iconos/play-fill.svg");
+          mask-image: url("/iconos/play-fill.svg");
+}
+.boton-video:active { transform: scale(0.94); }
+.boton-video:focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .boton-video:hover { background: rgb(24 24 27 / .65); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .boton-video { background: rgb(24 24 27 / .9); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* Esqueleto de carga con la forma real del proyecto (evita saltos de diseño) */
+.esqueleto .marco-barra { background: var(--superficie-2); }
+.esqueleto .proyecto-cuerpo { display: grid; gap: 14px; }
+.linea { display: block; height: 14px; border-radius: 999px; background: var(--superficie-2); }
+.linea.corta { width: 30%; }
+.linea.titulo { height: 40px; width: 75%; margin-bottom: 8px; }
+.linea.media { width: 60%; }
 .proyecto-media video, .proyecto-media img { width: 100%; height: 100%; object-fit: cover; }
 .respaldo {
   width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 24px;
@@ -186,30 +232,53 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .pie { border-top: 1px solid var(--borde); padding: 28px 0; color: var(--texto-tenue); font-size: .875rem; }
 
 /* ---------- Movimiento ----------
-   Entrada escalonada de la presentación y revelado de cada proyecto al
-   llegar a él. Solo si el visitante no pidió reducir el movimiento. */
+   Entrada escalonada de la presentación; el texto de cada proyecto
+   aparece al llegar a él. Solo si el visitante no pidió reducir movimiento. */
 @media (prefers-reduced-motion: no-preference) {
   .entrada { animation: entrar 700ms var(--ease-out) both; }
   .bajada.entrada { animation-delay: 80ms; }
   .acciones.entrada { animation-delay: 160ms; }
 
-  .con-revelado .proyecto .marco { clip-path: inset(0 0 100% 0 round var(--radio)); transition: clip-path 1000ms var(--ease-in-out); }
-  .con-revelado .proyecto-cuerpo > * { opacity: 0; transform: translateY(12px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
-  .con-revelado .proyecto.visible .marco { clip-path: inset(0 0 0 0 round var(--radio)); }
-  .con-revelado .proyecto.visible .proyecto-cuerpo > * { opacity: 1; transform: none; }
-  .con-revelado .proyecto.visible .proyecto-cuerpo > :nth-child(2) { transition-delay: 60ms; }
-  .con-revelado .proyecto.visible .proyecto-cuerpo > :nth-child(3) { transition-delay: 120ms; }
-  .con-revelado .proyecto.visible .proyecto-cuerpo > :nth-child(4) { transition-delay: 180ms; }
-  .con-revelado .proyecto.visible .proyecto-cuerpo > :nth-child(5) { transition-delay: 240ms; }
-  .con-revelado .proyecto.visible .proyecto-cuerpo > :nth-child(6) { transition-delay: 300ms; }
+  .con-revelado [data-revelar] .proyecto-cuerpo > * { opacity: 0; transform: translateY(12px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
+  .con-revelado [data-revelar].visible .proyecto-cuerpo > * { opacity: 1; transform: none; }
+  .con-revelado [data-revelar].visible .proyecto-cuerpo > :nth-child(2) { transition-delay: 60ms; }
+  .con-revelado [data-revelar].visible .proyecto-cuerpo > :nth-child(3) { transition-delay: 120ms; }
+  .con-revelado [data-revelar].visible .proyecto-cuerpo > :nth-child(4) { transition-delay: 180ms; }
+  .con-revelado [data-revelar].visible .proyecto-cuerpo > :nth-child(5) { transition-delay: 240ms; }
+  .con-revelado [data-revelar].visible .proyecto-cuerpo > :nth-child(6) { transition-delay: 300ms; }
+
+  /* 3D: el marco llega inclinado hacia atrás y se endereza mientras haces scroll.
+     Usa animación ligada al scroll (sin JavaScript); solo transform y opacity. */
+  @supports (animation-timeline: view()) {
+    [data-revelar] .marco {
+      transform-origin: 50% 100%;
+      animation: enderezar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 42%;
+    }
+  }
+  /* Navegadores sin animación por scroll: revelado de abajo hacia arriba */
+  @supports not (animation-timeline: view()) {
+    .con-revelado [data-revelar] .marco { clip-path: inset(0 0 100% 0 round var(--radio)); transition: clip-path 1000ms var(--ease-in-out); }
+    .con-revelado [data-revelar].visible .marco { clip-path: inset(0 0 0 0 round var(--radio)); }
+  }
+
+  .esqueleto .marco, .esqueleto .linea { animation: latir 1.6s ease-in-out infinite; }
 }
 @keyframes entrar {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: none; }
 }
+@keyframes enderezar {
+  from { transform: rotateX(24deg) translateY(56px) scale(0.94); opacity: 0.35; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes latir {
+  50% { opacity: 0.55; }
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .btn, .flecha { transition: none; }
+  .btn, .flecha, .boton-video { transition: none; }
 }
 
 /* ---------- Celular ---------- */
@@ -220,6 +289,9 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   .titulo-seccion { margin-bottom: 32px; }
   .lista-proyectos { gap: 80px; }
   .proyecto, .proyecto--invertido { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .proyecto--invertido .marco { order: 0; }
+  .proyecto--invertido .escena { order: 0; }
   .contacto { padding: 88px 0; }
+}
+@media (max-width: 560px) {
+  .marca-nombre { display: none; }
 }
