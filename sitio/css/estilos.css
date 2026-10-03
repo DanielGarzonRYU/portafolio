@@ -119,14 +119,42 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .marca-nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* ---------- Presentación ---------- */
-.presentacion { padding: 88px 0 64px; }
+/* ---------- Presentación con escena 3D ----------
+   .presentacion es alta y .intro-fijo queda pegada arriba mientras haces scroll:
+   el texto sale y la pila de pantallas (.pila > .lamina) sube, se despliega y gira.
+   Sin animación por scroll (o con reducir movimiento) se ve una composición estática. */
+.intro-fijo { padding: 88px 0 0; }
+.texto-intro { position: relative; z-index: 2; }
 .presentacion h1 { font-size: clamp(2.5rem, 5.4vw, 4.5rem); letter-spacing: -0.045em; max-width: 21ch; }
 .bajada { font-size: clamp(1.075rem, 1.6vw, 1.25rem); color: var(--texto-suave); margin: 1.5rem 0 2.25rem; max-width: 46ch; }
 .acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.palabra { display: inline-block; }
+
+.escenario {
+  position: relative; height: clamp(300px, 40vw, 520px); perspective: 2400px; pointer-events: none; overflow: hidden;
+  /* Desvanecido inferior: la pila nunca termina en un corte recto */
+  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent);
+          mask-image: linear-gradient(to bottom, #000 72%, transparent);
+}
+.pila {
+  position: absolute; left: 50%; top: 18%; width: min(60vw, 780px); aspect-ratio: 16 / 10;
+  transform-style: preserve-3d; transform: translateX(-50%) rotateX(50deg) rotateZ(-28deg);
+}
+.lamina { position: absolute; inset: 0; transform-style: preserve-3d; }
+.l1 { transform: translateZ(110px); }
+.l2 { transform: translateZ(55px); }
+.lamina-cara {
+  position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: var(--superficie);
+  border: 1px solid var(--borde);
+  box-shadow: 0 2px 4px rgba(24, 24, 27, .06), 0 40px 80px -24px rgba(24, 24, 27, .35);
+}
+.lamina-cara img { width: 100%; height: 100%; object-fit: cover; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .lamina-cara { box-shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 40px 80px -24px rgba(0, 0, 0, .8); }
+}
 
 /* ---------- Proyectos ---------- */
-.proyectos { padding: 16px 0 120px; }
+.proyectos { padding: 48px 0 120px; }
 .titulo-seccion { font-size: clamp(1.5rem, 2.6vw, 2rem); margin-bottom: 40px; }
 .lista-proyectos { display: grid; gap: 120px; }
 
@@ -216,7 +244,11 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .nota { font-size: .875rem; color: var(--texto-tenue); }
 
 .tecnologias { list-style: none; padding: 0; margin: 2rem 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.tecnologias li { font-size: .8125rem; color: var(--texto-suave); border: 1px solid var(--borde); border-radius: 999px; padding: .25em .85em; }
+.tecnologias li {
+  display: inline-flex; align-items: center; gap: .45em;
+  font-size: .8125rem; color: var(--texto-suave); border: 1px solid var(--borde); border-radius: 999px; padding: .3em .85em .3em .7em;
+}
+.logo-tec { width: .95em; height: .95em; flex: none; background: currentColor; -webkit-mask: center / contain no-repeat; mask: center / contain no-repeat; }
 
 .aviso { padding: 40px; border: 1px dashed var(--borde); border-radius: var(--radio); text-align: center; color: var(--texto-suave); margin: 0; }
 .aviso a { color: var(--acento); }
@@ -235,9 +267,26 @@ p { margin: 0 0 1em; text-wrap: pretty; }
    Entrada escalonada de la presentación; el texto de cada proyecto
    aparece al llegar a él. Solo si el visitante no pidió reducir movimiento. */
 @media (prefers-reduced-motion: no-preference) {
-  .entrada { animation: entrar 700ms var(--ease-out) both; }
-  .bajada.entrada { animation-delay: 80ms; }
-  .acciones.entrada { animation-delay: 160ms; }
+  /* Entrada: el título aparece palabra por palabra enfocándose; luego la bajada, los botones
+     y las pantallas caen sobre la pila una tras otra */
+  .palabra { animation: enfocar 900ms var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
+  .bajada { animation: entrar 700ms var(--ease-out) 420ms both; }
+  .texto-intro .acciones { animation: entrar 700ms var(--ease-out) 520ms both; }
+  .lamina-cara { animation: caer 1200ms var(--ease-out) both; }
+  .l3 .lamina-cara { animation-delay: 300ms; }
+  .l2 .lamina-cara { animation-delay: 420ms; }
+  .l1 .lamina-cara { animation-delay: 540ms; }
+
+  @supports (animation-timeline: view()) {
+    .presentacion { height: 250vh; view-timeline: --intro block; }
+    .intro-fijo { position: sticky; top: 64px; height: calc(100dvh - 64px); overflow: hidden; padding-top: clamp(32px, 8vh, 88px); }
+    .escenario { position: absolute; inset: 0; height: auto; }
+    .pila { top: 64%; animation: pila-sube linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
+    .l1 { animation: abrir-1 linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
+    .l2 { animation: abrir-2 linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
+    .l3 { animation: abrir-3 linear both; animation-timeline: --intro; animation-range: contain 0% contain 100%; }
+    .texto-intro { animation: intro-sale linear both; animation-timeline: --intro; animation-range: contain 0% contain 34%; }
+  }
 
   .con-revelado [data-revelar] .proyecto-cuerpo > * { opacity: 0; transform: translateY(12px); transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out); }
   .con-revelado [data-revelar].visible .proyecto-cuerpo > * { opacity: 1; transform: none; }
@@ -265,6 +314,33 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 
   .esqueleto .marco, .esqueleto .linea { animation: latir 1.6s ease-in-out infinite; }
 }
+@keyframes enfocar {
+  from { opacity: 0; filter: blur(10px); transform: translateY(14px); }
+  to { opacity: 1; filter: none; transform: none; }
+}
+@keyframes caer {
+  from { opacity: 0; transform: translateZ(420px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pila-sube {
+  from { transform: translateX(-50%) translateY(0) rotateX(56deg) rotateZ(-32deg) scale(0.92); }
+  to { transform: translateX(-50%) translateY(-60%) rotateX(18deg) rotateZ(-8deg) scale(0.94); }
+}
+@keyframes abrir-1 {
+  from { transform: translateZ(36px); }
+  to { transform: translateZ(220px) translate(11%, -20%); }
+}
+@keyframes abrir-2 {
+  from { transform: translateZ(18px); }
+  to { transform: translateZ(110px); }
+}
+@keyframes abrir-3 {
+  from { transform: none; }
+  to { transform: translate(-11%, 20%); }
+}
+@keyframes intro-sale {
+  to { opacity: 0; transform: translateY(-72px) scale(0.97); filter: blur(6px); }
+}
 @keyframes entrar {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: none; }
@@ -284,11 +360,13 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 /* ---------- Celular ---------- */
 @media (max-width: 860px) {
   .contenedor { padding: 0 20px; }
-  .presentacion { padding: 56px 0 48px; }
+
   .proyectos { padding-bottom: 88px; }
   .titulo-seccion { margin-bottom: 32px; }
   .lista-proyectos { gap: 80px; }
   .proyecto, .proyecto--invertido { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .intro-fijo { padding-top: 48px; }
+  .pila { width: 88vw; }
   .proyecto--invertido .escena { order: 0; }
   .contacto { padding: 88px 0; }
 }

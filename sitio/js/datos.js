@@ -105,3 +105,18 @@ export function iniciales(nombre) {
   const letras = palabras.length === 1 ? [palabras[0]] : [palabras[0], apellido];
   return letras.map((p) => p[0].toUpperCase()).join("");
 }
+
+// Logo de la tecnología (Simple Icons, CC0) a partir del nombre escrito en el panel.
+// Si no está en la lista, la etiqueta se muestra solo con texto.
+const LOGOS = {
+  react: "react", nodejs: "nodedotjs", node: "nodedotjs", postgresql: "postgresql", postgres: "postgresql",
+  javascript: "javascript", js: "javascript", typescript: "typescript", ts: "typescript", html: "html5", html5: "html5",
+  css: "css", css3: "css", java: "openjdk", kotlin: "kotlin", android: "android", androidstudio: "androidstudio",
+  php: "php", mysql: "mysql", sqlite: "sqlite", python: "python", firebase: "firebase", mongodb: "mongodb",
+  nextjs: "nextdotjs", tailwind: "tailwindcss", tailwindcss: "tailwindcss", vite: "vite", express: "express",
+  expressjs: "express", cloudflare: "cloudflare", docker: "docker", git: "git",
+};
+export function logoTecnologia(nombre) {
+  const clave = texto(nombre).toLowerCase().replace(/[\s.\-_]/g, "");
+  return LOGOS[clave] ? `/iconos/tec/${LOGOS[clave]}.svg` : "";
+}

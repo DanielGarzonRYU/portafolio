@@ -4,7 +4,7 @@
    y arma los bloques de proyectos. No necesitas editar este archivo.
    ============================================================= */
 
-import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio, iniciales } from "./datos.js";
+import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio, iniciales, logoTecnologia } from "./datos.js";
 
 let enlaceContacto = "";
 
@@ -31,7 +31,20 @@ function aplicarSitio(sitio) {
     a.href = `mailto:${sitio.correo}`;
     a.textContent = sitio.correo;
   });
-  document.getElementById("frase").textContent = sitio.frase;
+  escribirTitulo(document.getElementById("frase"), sitio.frase);
+}
+
+// El título viene en el HTML separado en palabras (para animarlas sin parpadeo).
+// Solo se reescribe si la frase del panel es distinta.
+function escribirTitulo(h1, frase) {
+  if (h1.textContent.trim() === frase) return;
+  h1.replaceChildren();
+  frase.split(/\s+/).forEach((texto, i) => {
+    if (i) h1.append(" ");
+    const palabra = el("span", "palabra", texto);
+    palabra.style.setProperty("--i", i);
+    h1.append(palabra);
+  });
 }
 
 function crearRespaldo(p) {
@@ -206,7 +219,20 @@ function crearProyecto(p, indice) {
   }
 
   if (p.tecnologias.length) {
-    const tecnologias = crearLista("tecnologias", p.tecnologias);
+    const tecnologias = el("ul", "tecnologias");
+    for (const nombre of p.tecnologias) {
+      const item = el("li");
+      const logo = logoTecnologia(nombre);
+      if (logo) {
+        // Logo monocromático (Simple Icons) pintado con el color del texto
+        const icono = el("span", "logo-tec");
+        icono.setAttribute("aria-hidden", "true");
+        icono.style.maskImage = icono.style.webkitMaskImage = `url("${logo}")`;
+        item.append(icono);
+      }
+      item.append(nombre);
+      tecnologias.append(item);
+    }
     tecnologias.setAttribute("aria-label", "Tecnologías");
     cuerpo.append(tecnologias);
   }

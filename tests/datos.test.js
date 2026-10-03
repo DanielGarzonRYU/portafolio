@@ -11,6 +11,7 @@ import {
   normalizarProyectos,
   dominio,
   iniciales,
+  logoTecnologia,
 } from "../sitio/js/datos.js";
 
 test("normalizarWhatsapp deja solo dígitos y agrega 57 a celulares colombianos", () => {
@@ -181,4 +182,14 @@ test("iniciales toma nombre y primer apellido", () => {
   assert.equal(iniciales("ana maría gómez"), "AG");
   assert.equal(iniciales("Prince"), "P");
   assert.equal(iniciales(""), "");
+});
+
+test("logoTecnologia reconoce nombres comunes como se escriben en el panel", () => {
+  assert.equal(logoTecnologia("React"), "/iconos/tec/react.svg");
+  assert.equal(logoTecnologia("Node.js"), "/iconos/tec/nodedotjs.svg");
+  assert.equal(logoTecnologia("node js"), "/iconos/tec/nodedotjs.svg");
+  assert.equal(logoTecnologia("PostgreSQL"), "/iconos/tec/postgresql.svg");
+  assert.equal(logoTecnologia(" HTML "), "/iconos/tec/html5.svg");
+  assert.equal(logoTecnologia("Algo raro"), "");
+  assert.equal(logoTecnologia(""), "");
 });
