@@ -18,10 +18,6 @@
         "Node.js",
         "PostgreSQL"
       ]
-    },
-    {
-      "nombre": "Prueba",
-      "frase": "prueba"
     }
   ]
 }
