@@ -300,7 +300,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .aviso a { color: var(--acento); }
 
 /* ---------- Contacto y pie ---------- */
-.contacto { border-top: 1px solid var(--borde); padding: 120px 0; overflow: hidden; }
+.contacto { border-top: 1px solid var(--borde); padding: 120px 0; overflow: clip; } /* clip y no hidden: hidden rompería la animación ligada al scroll */
 .contacto-rejilla { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; }
 .contacto h2 { font-size: clamp(2rem, 5vw, 3.5rem); letter-spacing: -0.04em; max-width: 16ch; }
 .contacto-texto > p { color: var(--texto-suave); font-size: 1.125rem; margin: 1.25rem 0 2rem; }
