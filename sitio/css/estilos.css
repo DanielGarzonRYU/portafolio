@@ -410,6 +410,10 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 /* Celular con animación por scroll: la galería empieza debajo de los botones */
 @media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    .pila { top: 62%; }
+    .pila { top: 62%; animation-name: pila-sube-movil; }
   }
+}
+@keyframes pila-sube-movil {
+  from { transform: translateX(-50%) translateY(0) rotateX(58deg) rotateZ(-34deg) scale(0.86); }
+  to { transform: translateX(-50%) translateY(-110%) rotateX(26deg) rotateZ(-14deg) scale(1.15); }
 }
