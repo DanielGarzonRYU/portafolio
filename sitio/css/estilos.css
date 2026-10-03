@@ -121,9 +121,8 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 /* ---------- Barra superior ---------- */
 .barra {
   position: sticky; top: 0; z-index: 50;
-  background: color-mix(in srgb, var(--fondo) 80%, transparent);
-  backdrop-filter: saturate(180%) blur(12px);
-  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  /* Sin backdrop-filter: re-desenfocar la galería 3D que pasa por detrás en cada cuadro era caro */
+  background: color-mix(in srgb, var(--fondo) 94%, transparent);
   border-bottom: 1px solid color-mix(in srgb, var(--borde) 70%, transparent);
 }
 .barra .contenedor { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
@@ -166,11 +165,14 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 
 .escenario {
   position: relative; height: clamp(300px, 40vw, 520px); perspective: 2400px; pointer-events: none; overflow: hidden;
-  /* Desvanecido inferior: la pila nunca termina en un corte recto */
-  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent), linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-  -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(to bottom, #000 70%, transparent), linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
-          mask-composite: intersect;
+}
+/* Desvanecido de bordes con un degradado encima (barato) en lugar de mask-image, que
+   obligaría a dibujar las 7 capas 3D en una superficie extra en cada cuadro del scroll. */
+.escenario::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(to bottom, transparent 68%, var(--fondo)),
+    linear-gradient(to right, var(--fondo), transparent 7%, transparent 93%, var(--fondo));
 }
 .pila {
   position: absolute; left: 50%; top: 20%; width: min(54vw, 720px); aspect-ratio: 16 / 10;
@@ -191,13 +193,13 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .lamina-cara {
   position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: var(--superficie);
   border: 1px solid var(--borde);
-  box-shadow: 0 2px 4px rgba(24, 24, 27, .06), 0 40px 80px -24px rgba(24, 24, 27, .35);
+  box-shadow: 0 2px 4px rgba(24, 24, 27, .06), 0 24px 44px -18px rgba(24, 24, 27, .32);
 }
 .lamina-cara img { width: 100%; height: 100%; object-fit: cover; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .lamina-cara { box-shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 40px 80px -24px rgba(0, 0, 0, .8); }
+  :root:not([data-theme="light"]) .lamina-cara { box-shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 24px 44px -18px rgba(0, 0, 0, .75); }
 }
-:root[data-theme="dark"] .lamina-cara { box-shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 40px 80px -24px rgba(0, 0, 0, .8); }
+:root[data-theme="dark"] .lamina-cara { box-shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 24px 44px -18px rgba(0, 0, 0, .75); }
 
 /* ---------- Proyectos ---------- */
 .proyectos { padding: 48px 0 120px; }
@@ -460,7 +462,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   to { transform: translateZ(var(--z1)); }
 }
 @keyframes intro-sale {
-  to { opacity: 0; transform: translateY(-72px) scale(0.97); filter: blur(6px); }
+  to { opacity: 0; transform: translateY(-72px) scale(0.97); }
 }
 @keyframes entrar {
   from { opacity: 0; transform: translateY(16px); }
