@@ -358,7 +358,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
     .tarjeta {
       animation: entregar linear both;
       animation-timeline: view();
-      animation-range: entry 5% cover 42%;
+      animation-range: entry 5% cover 35%;
     }
   }
 }
