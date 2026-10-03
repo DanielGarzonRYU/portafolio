@@ -14,6 +14,8 @@ import {
   logoTecnologia,
   temaInicial,
   telefonoLegible,
+  progresoContener,
+  progresoEntrada,
 } from "../sitio/js/datos.js";
 
 test("normalizarWhatsapp deja solo dígitos y agrega 57 a celulares colombianos", () => {
@@ -218,4 +220,23 @@ test("telefonoLegible formatea celulares colombianos", () => {
   assert.equal(telefonoLegible("3102165848"), "+57 310 216 5848");
   assert.equal(telefonoLegible("+1 555 123 4567"), "+15551234567");
   assert.equal(telefonoLegible(""), "");
+});
+
+test("progresoContener: avance mientras una sección alta queda fija (rango contain de CSS)", () => {
+  // sección de 2520 px que empieza en y=0, ventana de 900 px → recorrido de 1620 px
+  assert.equal(progresoContener({ scrollY: 0, inicio: 0, alto: 2520, ventana: 900 }), 0);
+  assert.equal(progresoContener({ scrollY: 810, inicio: 0, alto: 2520, ventana: 900 }), 0.5);
+  assert.equal(progresoContener({ scrollY: 5000, inicio: 0, alto: 2520, ventana: 900 }), 1);
+  assert.equal(progresoContener({ scrollY: 0, inicio: 300, alto: 2520, ventana: 900 }), 0);
+});
+
+test("progresoEntrada: avance de un elemento que entra por abajo (rango entry X% → cover Y%)", () => {
+  // elemento de 100 px; ventana de 1000 px; rango entry 0% → cover 50% = 550 px de recorrido
+  const base = { alto: 100, ventana: 1000, desdeEntrada: 0, hastaCubierto: 0.5 };
+  assert.equal(progresoEntrada({ ...base, arriba: 1000 }), 0);   // asoma por abajo
+  assert.equal(progresoEntrada({ ...base, arriba: 725 }), 0.5);
+  assert.equal(progresoEntrada({ ...base, arriba: 450 }), 1);
+  assert.equal(progresoEntrada({ ...base, arriba: 2000 }), 0);
+  // entry 5% desplaza el inicio un 5% del alto del elemento
+  assert.equal(progresoEntrada({ ...base, desdeEntrada: 0.05, arriba: 995 }), 0);
 });

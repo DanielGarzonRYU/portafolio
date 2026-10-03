@@ -439,8 +439,8 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   }
   /* Navegadores sin animación por scroll: revelado de abajo hacia arriba */
   @supports not (animation-timeline: view()) {
-    .con-revelado [data-revelar] .marco { clip-path: inset(0 0 100% 0 round var(--radio)); transition: clip-path 1000ms var(--ease-in-out); }
-    .con-revelado [data-revelar].visible .marco { clip-path: inset(0 0 0 0 round var(--radio)); }
+    .con-revelado:not(.scroll-js) [data-revelar] .marco { clip-path: inset(0 0 100% 0 round var(--radio)); transition: clip-path 1000ms var(--ease-in-out); }
+    .con-revelado:not(.scroll-js) [data-revelar].visible .marco { clip-path: inset(0 0 0 0 round var(--radio)); }
   }
 
   .esqueleto .marco, .esqueleto .linea { animation: latir 1.6s ease-in-out infinite; }
@@ -506,4 +506,16 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 @keyframes pila-sube-movil {
   from { transform: translateX(-50%) translateY(0) rotateX(58deg) rotateZ(-34deg) scale(0.86); }
   to { transform: translateX(-50%) translateY(-110%) rotateX(26deg) rotateZ(-14deg) scale(1.15); }
+}
+
+/* Respaldo para navegadores sin animation-timeline (Firefox, Safari antiguo): js/scroll-3d.js
+   agrega .scroll-js y anima con JavaScript; aquí va el mismo diseño fijo de la presentación. */
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-js .presentacion { height: 280vh; }
+  .scroll-js .intro-fijo { position: sticky; top: 64px; height: calc(100dvh - 64px); overflow: hidden; padding-top: clamp(32px, 8vh, 88px); }
+  .scroll-js .escenario { position: absolute; inset: 0; height: auto; }
+  .scroll-js .pila { top: 64%; }
+}
+@media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
+  .scroll-js .pila { top: 62%; }
 }

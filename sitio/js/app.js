@@ -6,6 +6,7 @@
 
 import { normalizarSitio, normalizarProyectos, enlaceWhatsapp, dominio, iniciales, logoTecnologia, telefonoLegible } from "./datos.js";
 import { activarTema } from "./tema.js";
+import { activarRespaldoScroll } from "./scroll-3d.js";
 
 let enlaceContacto = "";
 
@@ -289,6 +290,7 @@ function mostrarAviso(lista, texto) {
 
 async function iniciar() {
   activarTema();
+  const conectarRespaldo = activarRespaldoScroll(); // solo en navegadores sin animation-timeline
   const tarjeta = document.querySelector(".tarjeta");
   if (tarjeta) activarInclinacion(document.querySelector(".tarjeta-escena"), document.querySelector(".tarjeta-inclinacion"), { intensidad: 9, brillo: tarjeta });
   document.querySelectorAll("[data-anio]").forEach((n) => (n.textContent = new Date().getFullYear()));
@@ -314,6 +316,7 @@ async function iniciar() {
     return;
   }
   lista.replaceChildren(...datos.map(crearProyecto));
+  conectarRespaldo?.();
   prepararVideos();
 }
 

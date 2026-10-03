@@ -134,3 +134,22 @@ export function telefonoLegible(numero) {
   const m = d.match(/^57(3\d{2})(\d{3})(\d{4})$/);
   return m ? `+57 ${m[1]} ${m[2]} ${m[3]}` : `+${d}`;
 }
+
+// ---- Avance del scroll (para navegadores sin animation-timeline, como Firefox) ----
+const limitar = (v) => Math.min(1, Math.max(0, v));
+
+// Igual al rango "contain 0% → contain 100%" de CSS: 0 cuando la sección toca el borde
+// superior de la ventana, 1 cuando su borde inferior toca el inferior.
+export function progresoContener({ scrollY, inicio, alto, ventana }) {
+  const recorrido = alto - ventana;
+  return recorrido > 0 ? limitar((scrollY - inicio) / recorrido) : 0;
+}
+
+// Igual al rango "entry desdeEntrada → cover hastaCubierto" de CSS, a partir de la
+// posición actual del borde superior del elemento (arriba) relativa a la ventana.
+export function progresoEntrada({ arriba, alto, ventana, desdeEntrada = 0, hastaCubierto }) {
+  const avanzado = ventana - arriba; // px recorridos desde que el elemento asomó por abajo
+  const desde = desdeEntrada * alto;
+  const hasta = hastaCubierto * (ventana + alto);
+  return hasta > desde ? limitar((avanzado - desde) / (hasta - desde)) : 0;
+}
