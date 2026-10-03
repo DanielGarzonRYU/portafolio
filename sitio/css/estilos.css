@@ -400,10 +400,16 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   .lista-proyectos { gap: 80px; }
   .proyecto, .proyecto--invertido { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .intro-fijo { padding-top: 48px; }
-  .pila { width: 116vw; top: 26%; }
+  .pila { width: 116vw; }
   .proyecto--invertido .escena { order: 0; }
   .contacto { padding: 88px 0; }
 }
 @media (max-width: 560px) {
   .marca-nombre { display: none; }
+}
+/* Celular con animación por scroll: la galería empieza debajo de los botones */
+@media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .pila { top: 62%; }
+  }
 }
