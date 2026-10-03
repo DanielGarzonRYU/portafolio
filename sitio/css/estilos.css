@@ -187,7 +187,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .g-movil-1    { left: -15%; top: 34%;  width: 21%;  --z0: 130px; --z1: 360px; --d: 660ms; }
 .g-movil-2    { left: 80%;  top: 22%;  width: 21%;  --z0: 150px; --z1: 400px; --d: 720ms; }
 .telefono { aspect-ratio: 390 / 844; }
-.telefono .lamina-cara { border-radius: 26px; border: 5px solid #18181b; }
+.telefono .lamina-cara { border-radius: 14% / 6.5%; border: clamp(3px, 0.35vw, 5px) solid #18181b; }
 .lamina-cara {
   position: absolute; inset: 0; border-radius: 14px; overflow: hidden; background: var(--superficie);
   border: 1px solid var(--borde);
@@ -400,7 +400,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   .lista-proyectos { gap: 80px; }
   .proyecto, .proyecto--invertido { grid-template-columns: minmax(0, 1fr); gap: 28px; }
   .intro-fijo { padding-top: 48px; }
-  .pila { width: 74vw; }
+  .pila { width: 116vw; top: 26%; }
   .proyecto--invertido .escena { order: 0; }
   .contacto { padding: 88px 0; }
 }
