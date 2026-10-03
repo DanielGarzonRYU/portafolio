@@ -205,7 +205,7 @@ test("temaInicial respeta la elección guardada y si no, el sistema", () => {
 
 test("la política de datos existe, está enlazada desde el pie y cita la Ley 1581", () => {
   const inicio = readFileSync(new URL("../sitio/index.html", import.meta.url), "utf8");
-  assert.match(inicio, /href="\/legal\.html"/);
+  assert.match(inicio, /href="\/legal"/);
   const legal = readFileSync(new URL("../sitio/legal.html", import.meta.url), "utf8");
   for (const texto of ["Ley 1581 de 2012", "ccdgarzon@gmail.com", "Superintendencia de Industria y Comercio", "cookies"]) {
     assert.ok(legal.includes(texto), `falta "${texto}" en legal.html`);

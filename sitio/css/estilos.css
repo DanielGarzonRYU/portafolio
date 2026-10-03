@@ -333,7 +333,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .legal p, .legal li { color: var(--texto-suave); }
 .legal strong { color: var(--texto); font-weight: 600; }
 .legal ul { padding-left: 1.25rem; margin: 0 0 1em; display: grid; gap: .5rem; }
-.legal a { color: var(--acento); text-underline-offset: 3px; }
+.legal section a { color: var(--acento); text-underline-offset: 3px; }
 .legal code { font-size: .9em; background: var(--superficie-2); border: 1px solid var(--borde); border-radius: 6px; padding: .05em .4em; }
 
 /* ---------- Movimiento ----------
