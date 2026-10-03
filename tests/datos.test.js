@@ -164,7 +164,7 @@ test(".pages.yml usa exactamente las claves que lee la página", () => {
 });
 
 test("los textos visibles no usan raya larga ni semirraya", () => {
-  for (const ruta of ["../sitio/datos/sitio.json", "../sitio/datos/proyectos.json", "../sitio/index.html"]) {
+  for (const ruta of ["../sitio/datos/sitio.json", "../sitio/datos/proyectos.json", "../sitio/index.html", "../sitio/legal.html"]) {
     const contenido = readFileSync(new URL(ruta, import.meta.url), "utf8");
     assert.doesNotMatch(contenido, /[—–]/, `${ruta} tiene una raya larga`);
   }
@@ -201,4 +201,13 @@ test("temaInicial respeta la elección guardada y si no, el sistema", () => {
   assert.equal(temaInicial(null, true), "dark");
   assert.equal(temaInicial(null, false), "light");
   assert.equal(temaInicial("basura", true), "dark");
+});
+
+test("la política de datos existe, está enlazada desde el pie y cita la Ley 1581", () => {
+  const inicio = readFileSync(new URL("../sitio/index.html", import.meta.url), "utf8");
+  assert.match(inicio, /href="\/legal\.html"/);
+  const legal = readFileSync(new URL("../sitio/legal.html", import.meta.url), "utf8");
+  for (const texto of ["Ley 1581 de 2012", "ccdgarzon@gmail.com", "Superintendencia de Industria y Comercio", "cookies"]) {
+    assert.ok(legal.includes(texto), `falta "${texto}" en legal.html`);
+  }
 });
