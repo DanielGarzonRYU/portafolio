@@ -49,6 +49,22 @@
     color-scheme: dark;
   }
 }
+/* Tema elegido con el botón de sol/luna (tiene prioridad sobre el del sistema) */
+:root[data-theme="dark"] {
+  --fondo: #0c0c0e;
+  --superficie: #141417;
+  --superficie-2: #1c1c20;
+  --borde: #2a2a30;
+  --texto: #f4f4f5;
+  --texto-suave: #a1a1aa;
+  --texto-tenue: #8b8b94;
+  --acento: #34d399;
+  --acento-hover: #6ee7b7;
+  --sobre-acento: #052e1f;
+  --sombra-marco: 0 1px 2px rgba(0, 0, 0, .4), 0 16px 40px -12px rgba(0, 0, 0, .6);
+  color-scheme: dark;
+}
+
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 80px; }
@@ -116,6 +132,24 @@ p { margin: 0 0 1em; text-wrap: pretty; }
   display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 999px;
   background: var(--texto); color: var(--fondo); font-size: .75rem; font-weight: 600; letter-spacing: 0;
 }
+.barra-acciones { display: flex; align-items: center; gap: 8px; }
+/* Botón de tema: muestra la luna en claro y el sol en oscuro (íconos Phosphor) */
+.boton-tema {
+  display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border-radius: 999px; cursor: pointer;
+  background: transparent; color: var(--texto); border: 1px solid var(--borde);
+  transition: transform 160ms var(--ease-out), border-color 200ms ease;
+}
+.boton-tema::before {
+  content: ""; width: 18px; height: 18px; background: currentColor;
+  -webkit-mask: url("/iconos/moon.svg") center / contain no-repeat;
+          mask: url("/iconos/moon.svg") center / contain no-repeat;
+}
+:root[data-theme="dark"] .boton-tema::before { -webkit-mask-image: url("/iconos/sun.svg"); mask-image: url("/iconos/sun.svg"); }
+.boton-tema:active { transform: scale(0.94); }
+.boton-tema:focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .boton-tema:hover { border-color: var(--texto-tenue); }
+}
 .marca-nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
@@ -152,6 +186,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .lamina-cara { box-shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 40px 80px -24px rgba(0, 0, 0, .8); }
 }
+:root[data-theme="dark"] .lamina-cara { box-shadow: 0 2px 4px rgba(0, 0, 0, .4), 0 40px 80px -24px rgba(0, 0, 0, .8); }
 
 /* ---------- Proyectos ---------- */
 .proyectos { padding: 48px 0 120px; }

@@ -120,3 +120,9 @@ export function logoTecnologia(nombre) {
   const clave = texto(nombre).toLowerCase().replace(/[\s.\-_]/g, "");
   return LOGOS[clave] ? `/iconos/tec/${LOGOS[clave]}.svg` : "";
 }
+
+// Tema al cargar: la elección guardada del visitante; si no hay, la del sistema.
+export function temaInicial(guardado, sistemaOscuro) {
+  if (guardado === "light" || guardado === "dark") return guardado;
+  return sistemaOscuro ? "dark" : "light";
+}
