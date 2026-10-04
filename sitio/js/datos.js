@@ -79,6 +79,8 @@ export function normalizarProyecto(raw) {
     portada: rutaMedia(raw.portada),
     enlace: urlSegura(raw.enlace),
     nota_enlace: texto(raw.nota_enlace),
+    codigo: urlSegura(raw.codigo),
+    descarga: urlSegura(raw.descarga),
     tecnologias: listaDeTextos(raw.tecnologias),
   };
 }

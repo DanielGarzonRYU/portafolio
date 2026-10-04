@@ -1,6 +1,30 @@
 {
   "proyectos": [
     {
+      "nombre": "SIGPAR · Gestión de parqueaderos",
+      "tipo": "Sistema web y app Android · 2026",
+      "frase": "Controla entradas, salidas y cobros de varios parqueaderos en tiempo real, desde la web y desde el celular del operador.",
+      "logros": [
+        "Cobro automático por minuto, fracción u hora y recibo por PDF, WhatsApp o impresora",
+        "Plano del parqueadero que se arma solo a partir de una foto o un boceto",
+        "Lo que registra la app aparece en la web en segundos, con vista en 3D",
+        "Abonados, cierre de caja y reportes exportables a Excel y PDF"
+      ],
+      "video": "/media/sigpar.webm",
+      "portada": "/media/sigpar.jpg",
+      "enlace": "https://sigpar.onrender.com",
+      "nota_enlace": "Entra con un clic usando las cuentas de demostración. Puede tardar unos segundos en abrir.",
+      "descarga": "https://github.com/DanielGarzonRYU/sigpar/releases/latest/download/SIGPAR-1.0.0.apk",
+      "codigo": "https://github.com/DanielGarzonRYU/sigpar",
+      "tecnologias": [
+        "PHP",
+        "MySQL",
+        "JavaScript",
+        "Kotlin",
+        "Android"
+      ]
+    },
+    {
       "nombre": "KAF · Sandalias artesanales",
       "tipo": "Tienda en línea · 2026",
       "frase": "Catálogo en línea donde el dueño administra sus productos sin tocar código y los clientes piden por WhatsApp.",

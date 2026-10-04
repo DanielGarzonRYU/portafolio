@@ -96,6 +96,8 @@ test("normalizarProyecto trata igual vacío, null y ausente", () => {
     portada: "",
     enlace: "",
     nota_enlace: "",
+    codigo: "",
+    descarga: "",
     tecnologias: [],
   };
   assert.deepEqual(normalizarProyecto(minimo), esperado);
@@ -123,6 +125,12 @@ test("normalizarProyecto limpia listas y rutas", () => {
   assert.equal(p.enlace, "https://kaf-frontend.onrender.com");
 });
 
+test("normalizarProyecto acepta enlaces de código y descarga, y descarta los peligrosos", () => {
+  const p = normalizarProyecto({ nombre: "SIGPAR", frase: "Parqueaderos.", codigo: "github.com/u/sigpar", descarga: "javascript:alert(1)" });
+  assert.equal(p.codigo, "https://github.com/u/sigpar");
+  assert.equal(p.descarga, "");
+});
+
 test("normalizarProyectos acepta objeto o lista y descarta inválidos", () => {
   const valido = { nombre: "KAF", frase: "Tienda." };
   assert.equal(normalizarProyectos({ proyectos: [valido, { nombre: "Sin frase" }] }).length, 1);
@@ -148,18 +156,25 @@ test("proyectos.json real: KAF completo y nada se pierde al limpiar", () => {
   assert.ok(Array.isArray(crudo.proyectos));
   const proyectos = normalizarProyectos(crudo);
   assert.equal(proyectos.length, crudo.proyectos.length, "algún proyecto no tiene nombre o frase");
-  const kaf = proyectos[0];
+  const kaf = proyectos.find((x) => x.nombre.startsWith("KAF"));
+  assert.ok(kaf, "falta KAF");
   assert.equal(kaf.enlace, "https://kaf-frontend.onrender.com");
   assert.equal(kaf.logros.length, 3);
   assert.equal(kaf.video, "/media/kaf.mp4");
   assert.equal(kaf.portada, "/media/kaf.jpg");
+  const sigpar = proyectos.find((x) => x.nombre.startsWith("SIGPAR"));
+  assert.ok(sigpar, "falta SIGPAR");
+  assert.equal(sigpar.enlace, "https://sigpar.onrender.com");
+  assert.match(sigpar.descarga, /^https:\/\/github\.com\/DanielGarzonRYU\/sigpar\/releases\//);
+  assert.equal(sigpar.codigo, "https://github.com/DanielGarzonRYU/sigpar");
+  assert.ok(sigpar.logros.length <= 4, "el panel admite máximo 4 logros");
 });
 
 test(".pages.yml usa exactamente las claves que lee la página", () => {
   const yml = readFileSync(new URL("../.pages.yml", import.meta.url), "utf8");
   const nombres = [...yml.matchAll(/^\s*- name: (\w+)/gm)].map((m) => m[1]);
   for (const clave of Object.keys(SITIO_POR_DEFECTO)) assert.ok(nombres.includes(clave), `falta ${clave}`);
-  for (const clave of ["nombre", "tipo", "frase", "logros", "video", "portada", "enlace", "nota_enlace", "tecnologias"]) {
+  for (const clave of ["nombre", "tipo", "frase", "logros", "video", "portada", "enlace", "nota_enlace", "descarga", "codigo", "tecnologias"]) {
     assert.ok(nombres.includes(clave), `falta ${clave}`);
   }
   assert.match(yml, /input: sitio\/media/);

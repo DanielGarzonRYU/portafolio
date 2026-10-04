@@ -240,16 +240,24 @@ function crearProyecto(p, indice) {
   cuerpo.append(el("h3", "", p.nombre), el("p", "proyecto-frase", p.frase));
   if (p.logros.length) cuerpo.append(crearLista("logros", p.logros));
 
-  if (p.enlace) {
+  // Botones: el sitio en vivo (principal) y, si los hay, el código y la descarga de la app (secundarios)
+  if (p.enlace || p.codigo || p.descarga) {
     const fila = el("div", "proyecto-enlace");
-    const boton = el("a", "btn btn-principal", "Ver sitio en vivo");
-    const flecha = el("span", "flecha");
-    flecha.setAttribute("aria-hidden", "true");
-    boton.append(flecha);
-    boton.href = p.enlace;
-    boton.target = "_blank";
-    boton.rel = "noopener";
-    fila.append(boton);
+    const boton = (clase, texto, href, conFlecha) => {
+      const a = el("a", `btn ${clase}`, texto);
+      if (conFlecha) {
+        const flecha = el("span", "flecha");
+        flecha.setAttribute("aria-hidden", "true");
+        a.append(flecha);
+      }
+      a.href = href;
+      a.target = "_blank";
+      a.rel = "noopener";
+      return a;
+    };
+    if (p.enlace) fila.append(boton("btn-principal", "Ver sitio en vivo", p.enlace, true));
+    if (p.descarga) fila.append(boton("btn-secundario", "Descargar app", p.descarga, false));
+    if (p.codigo) fila.append(boton("btn-secundario", "Ver código", p.codigo, false));
     if (p.nota_enlace) fila.append(el("span", "nota", p.nota_enlace));
     cuerpo.append(fila);
   }

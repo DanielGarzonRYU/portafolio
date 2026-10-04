@@ -89,6 +89,20 @@ content:
             label: Nota junto al botón
             description: "Ej: Puede tardar unos segundos en abrir."
             type: string
+          - name: descarga
+            label: Enlace para descargar la app (opcional)
+            description: "Ej: el APK en GitHub Releases. Aparece como botón Descargar app."
+            type: string
+            pattern:
+              regex: "^$|^https?://"
+              message: "Debe empezar por https://"
+          - name: codigo
+            label: Enlace al código (opcional)
+            description: "Ej: el repositorio en GitHub. Aparece como botón Ver código."
+            type: string
+            pattern:
+              regex: "^$|^https?://"
+              message: "Debe empezar por https://"
           - name: tecnologias
             label: Tecnologías
             type: string
